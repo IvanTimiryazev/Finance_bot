@@ -16,7 +16,7 @@ connect.commit()
 
 
 cursor.executemany('INSERT INTO category VALUES (%s, %s, %s, %s)', (
-    ('products', 'продукты', True, 'еда, пятерочка, магнит, верный, кб, перекресток, дикси'),
+    ('products', 'продукты', True, 'еда, попить, пятерочка, магнит, верный, кб, перекресток, дикси'),
     ('cafe', 'кафе', False, 'кафе, мак, бк, кфс, вольчека, булочная, ресторан,'),
     ('entertainment', 'развлечения', False, 'кино, парк, музей, выставка, концерт, театр, кальян, клуб, тусовка'),
     ('rent', 'аренда и ку', True, 'кв, ку, аренда, квартира, электричество, коммуналка'),
@@ -69,6 +69,11 @@ def fetchall(table: str, columns: List[str]):
 def delete(table: str, row_id: int, id_user: str):
     row_id = int(row_id)
     cursor.execute(f"DELETE FROM {table} WHERE id = {row_id} AND id_user = '{id_user}'")
+    connect.commit()
+
+
+def delete_all(id_user: str):
+    cursor.execute(f"DELETE FROM expense WHERE id_user = '{id_user}'")
     connect.commit()
 
 

@@ -9,20 +9,25 @@ m3 = KeyboardButton('Категории')
 
 main_m.add(m1).add(m3).add(m2)
 
+
 stat_k = ReplyKeyboardMarkup(resize_keyboard=True)
 
 sm = KeyboardButton('Месяц')
 sd = KeyboardButton('Сегодня')
 sl = KeyboardButton('Недавние траты')
+sdl = KeyboardButton('Удалить все')
 btm = KeyboardButton('🔙Назад в меню')
 
-stat_k.add(sd).add(sm).add(sl).add(btm)
+stat_k.add(sd).add(sm).add(sl).add(sdl).add(btm)
 
-delete_in = InlineKeyboardMarkup(row_width=1)
 
-delkb = InlineKeyboardButton(text='Удалить', callback_data=f'del')
+del_all_kb = ReplyKeyboardMarkup(resize_keyboard=True)
 
-delete_in.add(delkb)
+dyes = KeyboardButton('✔Удалить')
+dno = KeyboardButton('🔙Назад в меню')
+
+del_all_kb.add(dyes, dno)
+
 
 
 

@@ -4,7 +4,7 @@ import exceptions
 from create_bot import dp, bot
 import expenses
 import categories
-from keyboards.kb import main_m, stat_k
+from keyboards.kb import main_m, stat_k, del_all_kb
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 
@@ -21,6 +21,18 @@ async def stat(message: types.Message):
 @dp.message_handler(Text(equals=['🔙Назад в меню']))
 async def back_m(message: types.Message):
     await message.answer('<b>Бот для учета финансов</b>\n\nВведите трату:', reply_markup=main_m)
+
+
+@dp.message_handler(Text(equals=['Удалить все']))
+async def del_all(message: types.Message):
+    await message.answer('а ю шуре❓', reply_markup=del_all_kb)
+
+
+@dp.message_handler(Text(equals=['✔Удалить']))
+async def dyes(message: types.Message):
+    id_user = message.from_user.id
+    expenses.del_all(id_user)
+    await message.answer('Удалил 🫡', reply_markup=main_m)
 
 
 @dp.message_handler(Text(equals=['Недавние траты']))
@@ -75,8 +87,7 @@ async def get_all_m(message: types.Message):
 async def get_cat(message: types.Message):
     c = categories.Categories().get_all_cat()
     m = '\n* '.join([f'<b>{i.name}</b>' + ' (' + ', '.join(i.aliases) + ')'for i in c])
-    await message.answer('<b>Категории трат📋</b>' + '\n\n' + '* ' + f'<i>{m}</i>')
-
+    await message.answer('<b>Категории трат📋</b>' + '\n\n' + '* ' + m)
 
 
 @dp.message_handler(Text(equals=['Как пользоваться?']))

@@ -54,6 +54,10 @@ def delete_exp(row_id: int, id_user: str):
     db.delete('expense', row_id, id_user)
 
 
+def del_all(id_user: str):
+    db.delete_all(id_user)
+
+
 def get_last(id_user: str):
     last = db.get_l(id_user)
     recent_pays = [Expense2(id=i[0], amount=i[1], category_name=i[2], time=i[3])for i in last]
