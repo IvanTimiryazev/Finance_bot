@@ -1,4 +1,4 @@
-from aiogram import types, Dispatcher
+from aiogram import types
 from aiogram.dispatcher.filters import Text
 import exceptions
 from create_bot import dp, bot

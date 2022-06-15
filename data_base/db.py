@@ -1,5 +1,5 @@
 import psycopg2 as pg
-from typing import Dict, List, Tuple
+from typing import Dict, List
 import expenses
 
 connect = pg.connect(dbname='finance', user='ivylou', password='peru1994peru')
@@ -41,7 +41,7 @@ cursor.execute(
     'CREATE TABLE IF NOT EXISTS expense (id SERIAL NOT NULL PRIMARY KEY, amount INTEGER,\
 created TIMESTAMP, category_codename VARCHAR(255),\
 raw_text TEXT, id_user TEXT, FOREIGN KEY(category_codename) REFERENCES category(codename))')
-# cursor.execute('CREATE INDEX IF NOT EXISTS id_userIndex ON expense(id_user ASC)')
+cursor.execute('CREATE INDEX IF NOT EXISTS id_user ON expense(id_user)')
 connect.commit()
 
 
@@ -141,6 +141,3 @@ def get_month_all_categories(id_user: str):
         x = cursor.fetchone()
         month.append(x)
     return month
-
-
-
