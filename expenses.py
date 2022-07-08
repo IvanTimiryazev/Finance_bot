@@ -32,10 +32,15 @@ class Expense2(NamedTuple):
 
 def add_expenses(raw_message: str, id_user: str):
     parsed_m = _parse_message(raw_message)
-    category = Categories().get_category(parsed_m.category_text)
+    category = Categories(id_user).get_category(parsed_m.category_text)
+    if not category:
+        raise exceptions.NotCorrectCategory('Такой категории пока нет.\nСоздай нужную категорию или категорию \
+                                            "Прочее" для трат без категории.')
+
     inserted_row = db.insert('expense', {'amount': parsed_m.amount, 'created': _get_now_f(),
                                          'category_codename': category.codename, 'raw_text': raw_message,
                                          'id_user': id_user})
+
     return Expense(id=None, amount=parsed_m.amount, category_name=category.name)
 
 

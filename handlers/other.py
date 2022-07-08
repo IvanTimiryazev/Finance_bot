@@ -1,14 +1,14 @@
-from aiogram import types
+from aiogram import types, Dispatcher
 from aiogram.dispatcher.filters import Text
 import exceptions
 from create_bot import dp, bot
 import expenses
 import categories
-from keyboards.kb import main_m, stat_k, del_all_kb
+from keyboards.kb import main_m, stat_k, del_all_kb, cat_set
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 
-@dp.message_handler(commands=['start'])
+# @dp.message_handler(commands=['start'])
 async def start_w(message: types.Message):
     await message.answer('<b>Бот для учета финансов</b>\n\nВведите трату:', reply_markup=main_m)
 
@@ -85,9 +85,10 @@ async def get_all_m(message: types.Message):
 
 @dp.message_handler(Text(equals=['Категории']))
 async def get_cat(message: types.Message):
-    c = categories.Categories().get_all_cat()
+    id_user = message.from_user.id
+    c = categories.Categories(id_user).get_all_cat(id_user)
     m = '\n* '.join([f'<b>{i.name}</b>' + ' (' + ', '.join(i.aliases) + ')'for i in c])
-    await message.answer('<b>Категории трат📋</b>' + '\n\n' + '* ' + m)
+    await message.answer('<b>Категории трат📋</b>' + '\n\n' + '* ' + m, reply_markup=cat_set)
 
 
 @dp.message_handler(Text(equals=['Как пользоваться?']))
@@ -99,13 +100,20 @@ async def how(message: types.Message):
     )
 
 
-@dp.message_handler()
+# @dp.message_handler()
 async def add_exp(message: types.Message):
     id_user = message.from_user.id
     try:
         expense = expenses.add_expenses(message.text, id_user)
     except exceptions.NotCorrectMessage as ex:
         await message.answer(str(ex))
-        return
+    except exceptions.NotCorrectCategory as ec:
+        await message.answer(str(ec))
 
+        return
     await message.answer(f'добавлены траты {expense.amount} на {expense.category_name}')
+
+
+def register_handlers_other(dp: Dispatcher):
+    dp.register_message_handler(start_w, commands=['start'])
+    dp.register_message_handler(add_exp)
