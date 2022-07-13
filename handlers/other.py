@@ -6,6 +6,11 @@ import expenses
 import categories
 from keyboards.kb import main_m, stat_k, del_all_kb, cat_set
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+import logging.config
+
+logging.config.fileConfig(fname='logging.conf')
+logger = logging.getLogger(__name__)
+loggerInfo = logging.getLogger('logInfo')
 
 
 # @dp.message_handler(commands=['start'])

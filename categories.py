@@ -1,6 +1,6 @@
 from typing import List, Dict, NamedTuple
 from data_base import db
-from transliterate import translit, get_available_language_codes
+from transliterate import translit
 
 
 class Category(NamedTuple):

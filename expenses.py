@@ -5,6 +5,10 @@ import exceptions
 import pytz
 from data_base import db
 from categories import Categories
+import logging
+
+logging.basicConfig(filename='logging.log', level='ERROR')
+logger = logging.getLogger(__name__)
 
 
 class Message(NamedTuple):

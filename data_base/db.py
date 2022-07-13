@@ -1,13 +1,23 @@
 import psycopg2 as pg
 from typing import Dict, List
 import expenses
+import os
+from dotenv import load_dotenv
+import logging.config
 
-connect = pg.connect(dbname='finance', user='ivylou', password='peru1994peru')
+logging.config.fileConfig(fname='logging.conf')
+logger = logging.getLogger(__name__)
+loggerInfo = logging.getLogger('logInfo')
+
+load_dotenv()
+
+connect = pg.connect(
+    dbname=os.getenv('DBNAME'), user=os.getenv('USER'),
+    password=os.getenv('PASSWORD'), port=os.getenv('PORT')
+)
+if connect:
+    loggerInfo.info('DB connected')
 cursor = connect.cursor()
-
-# cursor.execute('DROP TABLE IF EXISTS category CASCADE')
-# cursor.execute('DROP TABLE IF EXISTS expense CASCADE')
-# connect.commit()
 
 
 cursor.execute(
@@ -134,3 +144,8 @@ def delete_cat(name: str, id_user: str):
     (SELECT codename FROM category WHERE name = '{name}')")
     cursor.execute(f"DELETE FROM category WHERE name = '{name}' AND id_user_c = '{id_user}'")
     connect.commit()
+
+
+# cursor.execute('DROP TABLE IF EXISTS category CASCADE')
+# cursor.execute('DROP TABLE IF EXISTS expense CASCADE')
+# connect.commit()
