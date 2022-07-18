@@ -13,7 +13,7 @@ load_dotenv()
 
 connect = pg.connect(
     dbname=os.getenv('DBNAME'), user=os.getenv('USER'),
-    password=os.getenv('PASSWORD'), port=os.getenv('PORT')
+    password=os.getenv('PASSWORD'), port=os.getenv('PORT'), host=os.getenv('HOST')
 )
 if connect:
     loggerInfo.info('DB connected')

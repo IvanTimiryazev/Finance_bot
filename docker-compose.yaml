@@ -1,0 +1,37 @@
+version: "3.8"
+
+services:
+
+  db:
+    image: postgres:14.3
+    container_name: postgres
+    ports:
+      - '5432:5432'
+    volumes:
+      - $HOME/docker/volumes/postgres/fibo:/var/lib/postgresql/data
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: ${USER}
+      POSTGRES_PASSWORD: ${PASSWORD}
+      POSTGRES_DB: ${DBNAME}
+      PGDATA: /var/lib/postgresql/data
+    restart: always
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  bot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    environment:
+      POSTGRES_HOST: db
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy

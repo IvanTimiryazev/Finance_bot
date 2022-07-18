@@ -6,41 +6,30 @@ import expenses
 import categories
 from keyboards.kb import main_m, stat_k, del_all_kb, cat_set
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-import logging.config
-
-logging.config.fileConfig(fname='logging.conf')
-logger = logging.getLogger(__name__)
-loggerInfo = logging.getLogger('logInfo')
 
 
-# @dp.message_handler(commands=['start'])
 async def start_w(message: types.Message):
     await message.answer('<b>Бот для учета финансов</b>\n\nВведите трату:', reply_markup=main_m)
 
 
-@dp.message_handler(Text(equals=['Статистика']))
 async def stat(message: types.Message):
     await message.answer('<b>Твоя статистика📊</b>', reply_markup=stat_k)
 
 
-@dp.message_handler(Text(equals=['🔙Назад в меню']))
 async def back_m(message: types.Message):
     await message.answer('<b>Бот для учета финансов</b>\n\nВведите трату:', reply_markup=main_m)
 
 
-@dp.message_handler(Text(equals=['Удалить все']))
 async def del_all(message: types.Message):
     await message.answer('а ю шуре❓', reply_markup=del_all_kb)
 
 
-@dp.message_handler(Text(equals=['✔Удалить']))
 async def dyes(message: types.Message):
     id_user = message.from_user.id
     expenses.del_all(id_user)
     await message.answer('Удалил 🫡', reply_markup=main_m)
 
 
-@dp.message_handler(Text(equals=['Недавние траты']))
 async def get_last_exp(message: types.Message):
     id_user = message.from_user.id
     last = expenses.get_last(id_user)
@@ -54,7 +43,6 @@ async def get_last_exp(message: types.Message):
             reply_markup=InlineKeyboardMarkup().add(InlineKeyboardButton('🔝Удалить', callback_data=f'del{i.id}')))
 
 
-@dp.callback_query_handler(Text(startswith='del'))
 async def del_callback(callback: types.CallbackQuery):
     id_user = callback.from_user.id
     row_id = int(callback.data.replace('del', ''))
@@ -62,7 +50,6 @@ async def del_callback(callback: types.CallbackQuery):
     await callback.answer(text='Удалил🗑', show_alert=True)
 
 
-@dp.message_handler(Text(equals=['Сегодня']))
 async def get_all_today(message: types.Message):
     id_user = message.from_user.id
     today = expenses.get_today(id_user)
@@ -75,7 +62,6 @@ async def get_all_today(message: types.Message):
     await message.answer(f'<b>Всего расходов сегодня:</b> {today} рублей\n\n' + '* ' + m)
 
 
-@dp.message_handler(Text(equals=['Месяц']))
 async def get_all_m(message: types.Message):
     id_user = message.from_user.id
     month = expenses.get_month(id_user)
@@ -88,7 +74,6 @@ async def get_all_m(message: types.Message):
     await message.answer(f'<b>Всего расходов в этом месяце:</b> {month} рублей\n\n' + '* ' + m)
 
 
-@dp.message_handler(Text(equals=['Категории']))
 async def get_cat(message: types.Message):
     id_user = message.from_user.id
     c = categories.Categories(id_user).get_all_cat(id_user)
@@ -96,16 +81,16 @@ async def get_cat(message: types.Message):
     await message.answer('<b>Категории трат📋</b>' + '\n\n' + '* ' + m, reply_markup=cat_set)
 
 
-@dp.message_handler(Text(equals=['Как пользоваться?']))
 async def how(message: types.Message):
     await message.answer(
         '<b>Немного о боте</b>\n\n<b>Что делает этот бот?</b>👀\nЭто бот - финансовый асистент. Он сохраняет ваши \
-траты, распределяет по категориям, а так же выводит статистику\n\n<b>Как внести трату?📒\n</b>Просто введите сообщение в\
- формате: "Сумма категория".Например: 300 такси\n\n<b>Бот бесплатный?</b>💸\nДа'
+траты, распределяет по категориям, а так же выводит статистику.\n\n<b>Как внести трату?📒</b>\nПросто введите сообщение в\
+ формате: "Сумма категория". Например: 300 такси.\n\n<b>Как создать категорию?🤔</b>\nДобавляйте нужные вам категории!\
+ Заходите в раздел "Категории", и нажмите "Добавить". Там же вы можете удалить категорию.\n(При удалении категории, \
+все траты из этой категории будут удалены.)\n\n<b>Бот бесплатный?</b>💸\nДа'
     )
 
 
-# @dp.message_handler()
 async def add_exp(message: types.Message):
     id_user = message.from_user.id
     try:
@@ -121,4 +106,14 @@ async def add_exp(message: types.Message):
 
 def register_handlers_other(dp: Dispatcher):
     dp.register_message_handler(start_w, commands=['start'])
+    dp.register_message_handler(stat, Text(equals=['Статистика']))
+    dp.register_message_handler(back_m, Text(equals=['🔙Назад в меню']))
+    dp.register_message_handler(del_all, Text(equals=['Удалить все']))
+    dp.register_message_handler(dyes, Text(equals=['✔Удалить']))
+    dp.register_message_handler(get_last_exp, Text(equals=['Недавние траты']))
+    dp.register_callback_query_handler(del_callback, Text(startswith='del'))
+    dp.register_message_handler(get_all_today, Text(equals=['Сегодня']))
+    dp.register_message_handler(get_all_m, Text(equals=['Месяц']))
+    dp.register_message_handler(get_cat, Text(equals=['Категории']))
+    dp.register_message_handler(how, Text(equals=['Как пользоваться?']))
     dp.register_message_handler(add_exp)
